@@ -98,6 +98,7 @@ class CompressCat private constructor() {
             compressedSingle(image, false)
             return
         }
+        loading?.message("正在压缩第  ${images.indexOf(image) + 1} / ${images.size} 张")
 
         compress.compress(image.originalPath, object : CompressSingleListener {
             override fun compressSuccess(path: String) {
@@ -128,9 +129,6 @@ class CompressCat private constructor() {
         image.isCompress = succ
         image.compressPath = path
         val index = images.indexOf(image)
-
-//        loading?.progress((index + 1) * 100 / images.size)
-        loading?.message("已压缩  ${index + 1} / ${images.size} 张")
 
         if(config!!.enableDeleteOriginalImage){
             val file = File(image.originalPath)

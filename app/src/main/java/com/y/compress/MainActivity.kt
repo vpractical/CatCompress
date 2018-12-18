@@ -62,6 +62,10 @@ class MainActivity : AppCompatActivity() {
             openAlbum(true)
         }
 
+        btnPhoto3.setOnClickListener {
+            openAlbum2(true)
+        }
+
         init()
     }
 
@@ -81,11 +85,8 @@ class MainActivity : AppCompatActivity() {
         CommonUtils.hasCamera(this, CommonUtils.getCameraIntent(outputUri), CAMERA_REQUEST_CODE)
     }
 
-    private fun openAlbum(mulit:Boolean) {
-//        CommonUtils.openAlbum(this, ALBUM_REQUEST_CODE)
-
+    private fun openAlbum(mulit: Boolean) {
         list.clear()
-
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160202_124912.jpg")
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160202_124926.jpg")
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160202_124937.jpg")
@@ -116,14 +117,18 @@ class MainActivity : AppCompatActivity() {
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160403_115812.jpg")
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160408_154627.jpg")
 
-        preCompress(false,mulit)
+        preCompress(false, mulit)
+    }
+
+    private fun openAlbum2(mulit: Boolean) {
+        CommonUtils.openAlbum(this, ALBUM_REQUEST_CODE)
+        list.clear()
     }
 
     @PermCat(PERMISSION_STORAGE_READ)
     private fun init() {
         val perms = arrayOf(PERMISSION_STORAGE_READ, PERMISSION_STORAGE_WRITE, PERMISSION_CAMERA)
         if (!PermissionCat.has(this, *perms)) {
-            Log.e("init()", "----")
             PermissionCat.request("给我权限", this, null, *perms)
         }
     }
@@ -145,8 +150,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == ALBUM_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 // 测试多张图片同时压缩
-
-
                 val uri = data.data
                 val path = UriParseUtils.getPath(this, uri)
                 list.add(path)
@@ -155,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun preCompress(isDelete: Boolean = false,isMulit: Boolean = false) {
+    private fun preCompress(isDelete: Boolean = false, isMulit: Boolean = false) {
         val config = CompressConfig
                 .get(this)
                 .maxPixel(1000)
@@ -186,13 +189,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if(isMulit){
+        if (isMulit) {
             CompressCat2
                     .get(this)
                     .config(config)
                     .callback(callback)
                     .compress(list)
-        }else{
+        } else {
             CompressCat
                     .get(this)
                     .config(config)

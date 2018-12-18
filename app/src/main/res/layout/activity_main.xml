@@ -32,5 +32,10 @@
         android:gravity="center"
         android:text="相册-多线程" />
 
-
+    <Button
+        android:id="@+id/btnPhoto3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="长图测试" />
 </LinearLayout>

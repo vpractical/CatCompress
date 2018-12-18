@@ -13,9 +13,10 @@ class CompressConfig private constructor() {
      * 压缩后不超过的最大kb
      */
     internal var maxSize = 200
-
-
-    internal var form: Bitmap.Config? = null
+    /**
+     * 8888
+     */
+    internal var form = Bitmap.Config.RGB_565
     /**
      * 是否启用像素压缩
      */

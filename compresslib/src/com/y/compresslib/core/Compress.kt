@@ -33,6 +33,7 @@ internal class Compress(private var config: CompressConfig) {
             options.inJustDecodeBounds = false
             val w = options.outWidth
             val h = options.outHeight
+            val isLongPic = h / w > 4
             val max = config.maxPixel
             var ratio = 1 //图片大小与期望大小的比例
             if (w > h && w > max) {
@@ -41,14 +42,12 @@ internal class Compress(private var config: CompressConfig) {
                 ratio = (max + h) / max
             }
 
-            if (ratio < 1) {
+            if (ratio < 1 || isLongPic) {
                 ratio = 1
             }
 
             options.inSampleSize = ratio
-            if (config.form != null) {
-                options.inPreferredConfig = config.form
-            }
+            options.inPreferredConfig = config.form
             options.inPurgeable = true
             options.inInputShareable = true // 当系统内存不够时候图片自动被回收,和inPurgeable同时设置有效
             val bitmap = BitmapFactory.decodeFile(path, options)
@@ -79,7 +78,7 @@ internal class Compress(private var config: CompressConfig) {
         try {
             var option = 100
             bitmap.compress(Bitmap.CompressFormat.JPEG, option, baos)
-//            var siz = baos.toByteArray().size / 1024
+//            val siz = baos.toByteArray().size / 1024
             while (baos.toByteArray().size / 1024 > config.maxSize) {
                 baos.reset()
                 option -= 7
@@ -89,7 +88,7 @@ internal class Compress(private var config: CompressConfig) {
                     break
                 }
             }
-//            Log.e("----core:quality----", "size=${bitmap.byteCount/1024};size=$siz;option=$option;-----size=${baos.toByteArray().size / 1024}")
+//            Log.e("----core:quality----", "size=$siz;option=$option;-----size=${baos.toByteArray().size / 1024}")
             fos.write(baos.toByteArray())
             listener.compressSuccess(file.absolutePath)
         } catch (e: Exception) {
