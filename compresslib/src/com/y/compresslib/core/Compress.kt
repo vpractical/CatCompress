@@ -2,6 +2,7 @@ package com.y.compresslib.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import com.y.compresslib.config.CompressConfig
 import com.y.compresslib.listener.CompressSingleListener
 import java.io.ByteArrayOutputStream
@@ -33,16 +34,15 @@ internal class Compress(private var config: CompressConfig) {
             options.inJustDecodeBounds = false
             val w = options.outWidth
             val h = options.outHeight
-            val isLongPic = h / w > 4
             val max = config.maxPixel
             var ratio = 1 //图片大小与期望大小的比例
-            if (w > h && w > max) {
-                ratio = (max + w) / max
-            } else if (w < h && h > max) {
+            if (h in max..w) {
                 ratio = (max + h) / max
+            } else if (w in max..h) {
+                ratio = (max + w) / max
             }
 
-            if (ratio < 1 || isLongPic) {
+            if (ratio < 1) {
                 ratio = 1
             }
 
@@ -52,7 +52,7 @@ internal class Compress(private var config: CompressConfig) {
             options.inInputShareable = true // 当系统内存不够时候图片自动被回收,和inPurgeable同时设置有效
             val bitmap = BitmapFactory.decodeFile(path, options)
 
-//            Log.e("----core:pixel----", "w=$w;h=$h;ration=$ratio;-----w=${bitmap.width};h=${bitmap.height};size=${bitmap.byteCount / 1024}")
+            Log.e("----core:pixel----", "w=$w;h=$h;ration=$ratio;-----w=${bitmap.width};h=${bitmap.height};size=${bitmap.byteCount / 1024}")
 
             if (config.enableQualityCompress) {
                 compressByQuality(path, bitmap, listener)
@@ -78,17 +78,16 @@ internal class Compress(private var config: CompressConfig) {
         try {
             var option = 100
             bitmap.compress(Bitmap.CompressFormat.JPEG, option, baos)
-//            val siz = baos.toByteArray().size / 1024
-            while (baos.toByteArray().size / 1024 > config.maxSize) {
+            while (baos.toByteArray().size > config.maxSize) {
                 baos.reset()
-                option -= 7
+                option -= 4
                 bitmap.compress(Bitmap.CompressFormat.JPEG, option, baos)
-                if (option - 7 <= 0) {
+                if (option - 4 <= 0) {
                     //已经质量压缩到这个比例下最小
                     break
                 }
             }
-//            Log.e("----core:quality----", "size=$siz;option=$option;-----size=${baos.toByteArray().size / 1024}")
+            Log.e("----core:quality----", "option=$option;-----size=${baos.toByteArray().size / 1024}")
             fos.write(baos.toByteArray())
             listener.compressSuccess(file.absolutePath)
         } catch (e: Exception) {

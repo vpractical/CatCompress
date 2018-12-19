@@ -115,7 +115,10 @@ class MainActivity : AppCompatActivity() {
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160326_173357.jpg")
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160326_173410.jpg")
         list.add("/storage/emulated/0/DCIM/Camera/IMG_20160403_115812.jpg")
-        list.add("/storage/emulated/0/DCIM/Camera/IMG_20160408_154627.jpg")
+        list.add("/storage/emulated/0/DCIM/Camera/IMG_20160408_154655.jpg")
+
+        list.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1491359546770.jpg")
+        list.add("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1491359550333.jpg")
 
         preCompress(false, mulit)
     }

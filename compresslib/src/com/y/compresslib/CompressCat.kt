@@ -48,7 +48,7 @@ class CompressCat private constructor() {
      */
     fun compress(paths: ArrayList<String>) {
 
-        if(config == null){
+        if (config == null) {
             config = CompressConfig.get(activity)
         }
 
@@ -64,7 +64,19 @@ class CompressCat private constructor() {
         compress = Compress(config!!)
 
         for (path in paths) {
-            images.add(Image(path))
+            val image = Image(path)
+            images.add(image)
+
+            if (TextUtils.isEmpty(image.originalPath)) {
+                compressedSingle(image, false)
+                return
+            }
+
+            val file = File(image.originalPath)
+            if (!file.exists() || !file.isFile) {
+                compressedSingle(image, false)
+                return
+            }
         }
 
         if (images.isEmpty()) {
@@ -72,13 +84,13 @@ class CompressCat private constructor() {
             return
         }
 
-        if(config!!.enableShowLoading){
+        if (config!!.enableShowLoading) {
             loading = ProgressLoading()
             loading?.show(activity)
             loading?.title("压缩中...")
         }
 
-        Thread{
+        Thread {
             compress(images[0])
         }.start()
 
@@ -88,16 +100,7 @@ class CompressCat private constructor() {
      * 压缩一张图片
      */
     private fun compress(image: Image) {
-        if (TextUtils.isEmpty(image.originalPath)) {
-            compressedSingle(image, false)
-            return
-        }
 
-        val file = File(image.originalPath)
-        if (!file.exists() || !file.isFile) {
-            compressedSingle(image, false)
-            return
-        }
         loading?.message("正在压缩第  ${images.indexOf(image) + 1} / ${images.size} 张")
 
         compress.compress(image.originalPath, object : CompressSingleListener {
@@ -122,6 +125,7 @@ class CompressCat private constructor() {
             mainHandler.post {
                 loading?.cancel()
                 callback?.compressFailed(images, msg ?: "压缩失败，请检查传入的图片组地址")
+                callback = null
             }
             return
         }
@@ -130,7 +134,7 @@ class CompressCat private constructor() {
         image.compressPath = path
         val index = images.indexOf(image)
 
-        if(config!!.enableDeleteOriginalImage){
+        if (config!!.enableDeleteOriginalImage) {
             val file = File(image.originalPath)
             file.delete()
         }
@@ -139,6 +143,7 @@ class CompressCat private constructor() {
             mainHandler.post {
                 loading?.cancel()
                 callback?.compressSuccess(images)
+                callback = null
             }
             return
         }

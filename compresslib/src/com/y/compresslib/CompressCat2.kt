@@ -54,7 +54,7 @@ class CompressCat2 private constructor() {
      */
     fun compress(paths: ArrayList<String>) {
 
-        if(config == null){
+        if (config == null) {
             config = CompressConfig.get(activity)
         }
 
@@ -75,7 +75,7 @@ class CompressCat2 private constructor() {
             return
         }
 
-        if(config!!.enableShowLoading){
+        if (config!!.enableShowLoading) {
             loading = ProgressLoading()
             loading?.show(activity)
             loading?.title("压缩中...")
@@ -83,7 +83,7 @@ class CompressCat2 private constructor() {
 
         for (path in paths) {
             val image = Image(path)
-
+            images.add(image)
             if (TextUtils.isEmpty(image.originalPath)) {
                 compressedSingle(image, false)
                 return
@@ -94,10 +94,12 @@ class CompressCat2 private constructor() {
                 compressedSingle(image, false)
                 return
             }
+        }
 
-            images.add(image)
+        for (image in images){
             compress(image)
         }
+
     }
 
     /**
@@ -133,6 +135,7 @@ class CompressCat2 private constructor() {
         if (!succ) {
             loading?.cancel()
             callback?.compressFailed(images, msg ?: "压缩失败，请检查传入的图片组地址")
+            callback = null
             return
         }
 
@@ -151,6 +154,7 @@ class CompressCat2 private constructor() {
         if (count == images.size) {
             loading?.cancel()
             callback?.compressSuccess(images)
+            callback = null
             return
         }
     }

@@ -8,11 +8,11 @@ class CompressConfig private constructor() {
     /**
      * 较短边不超过的最大px
      */
-    internal var maxPixel = 1000
+    internal var maxPixel = 1080
     /**
      * 压缩后不超过的最大kb
      */
-    internal var maxSize = 200
+    internal var maxSize = 200 * 1024
     /**
      * 8888
      */
@@ -52,7 +52,7 @@ class CompressConfig private constructor() {
     }
 
     fun maxSize(maxSize: Int): CompressConfig {
-        this.maxSize = maxSize
+        this.maxSize = maxSize * 1024
         return this
     }
 
