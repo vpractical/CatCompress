@@ -1,8 +1,23 @@
 # CatCompress
 图片压缩实现
 
-
 ## 使用：
+
+```
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+	dependencies {
+	        implementation 'com.github.vpractical:CatCompress:Tag'
+	}
+
+
+```
+
 ```
         val config = CompressConfig
                 .get(this)
