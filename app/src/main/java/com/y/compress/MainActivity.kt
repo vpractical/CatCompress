@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("----", "压缩完成${list.size};耗时 = $cur")
                 for (it in list) {
                     if (!TextUtils.isEmpty(it.compressPath)) {
-
+                        //...
                     } else {
                         Log.e("----", "压缩失败,compressPath有null值${it.isCompress}")
                     }
